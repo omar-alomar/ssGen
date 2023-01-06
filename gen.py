@@ -60,9 +60,73 @@ while True:
 
         values['weather'] = values['weather'].lower()
 
-        dir1Speeds = values['dir1_speeds'].split(',')
+        dir1Speeds = values['dir1_speeds'].split(',')        
+        dir1Speeds = [int(i) for i in dir1Speeds]
+        values['dir1_speeds'] = dir1Speeds
+        
         dir2Speeds = values['dir2_speeds'].split(',')
-        print(dir1Speeds, dir2Speeds)
+        dir2Speeds = [int(i) for i in dir2Speeds]
+        values['dir2_speeds'] = dir2Speeds
+
+        dir1Vehs = len(dir1Speeds)
+        dir2Vehs = len(dir2Speeds)
+        totalVehs = dir1Vehs + dir2Vehs
+        values['total_vehs'] = str(totalVehs)
+
+        dir1SpeedsSorted = sorted(dir1Speeds)
+        dir2SpeedsSorted = sorted(dir2Speeds)
+
+        # creating dicts to store stuff
+        dir1SpeedsDict = {}
+        dir1Percents = {}
+        dir1CumPercents = {}
+        for i in range(len(dir1SpeedsSorted)):
+            if dir1SpeedsSorted[i] != dir1SpeedsSorted[i-1]:
+                dir1SpeedsDict[dir1SpeedsSorted[i]] = 0
+                dir1Percents[dir1SpeedsSorted[i]] = 0
+                dir1CumPercents[dir1SpeedsSorted[i]] = 0
+
+        for i in dir1SpeedsSorted:
+            count = 0
+            for j in dir1SpeedsSorted:
+                if i == j:
+                    count += 1
+            dir1SpeedsDict[i] = count
+
+        cumPercent = 0.0
+        for speed in dir1Percents.items():
+            dir1Percents[speed[0]] = dir1SpeedsDict[speed[0]] / dir1Vehs
+            cumPercent += dir1Percents[speed[0]]
+            dir1CumPercents[speed[0]] = cumPercent
+
+        dir2SpeedsDict = {}
+        dir2Percents = {}
+        dir2CumPercents = {}
+        for i in range(len(dir2SpeedsSorted)):
+            if dir2SpeedsSorted[i] != dir2SpeedsSorted[i-1]:
+                dir2SpeedsDict[dir2SpeedsSorted[i]] = 0
+                dir2Percents[dir2SpeedsSorted[i]] = 0
+                dir2CumPercents[dir2SpeedsSorted[i]] = 0
+
+        for i in dir2SpeedsSorted:
+            count = 0
+            for j in dir2SpeedsSorted:
+                if i == j:
+                    count += 1
+            dir2SpeedsDict[i] = count
+
+        cumPercent = 0.0
+        for speed in dir2Percents.items():
+            dir2Percents[speed[0]] = dir2SpeedsDict[speed[0]] / dir2Vehs
+            cumPercent += dir2Percents[speed[0]]
+            dir2CumPercents[speed[0]] = cumPercent
+        
+
+
+        print(dir2Percents)
+        print(dir2CumPercents)
+
+
 
         doc.render(values)
         doc.save('output.docx')
